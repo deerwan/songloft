@@ -1,26 +1,36 @@
 # 隐私说明
 
-> 最后更新：2026-05-28
+> 最后更新：2026-05-29
 
 Songloft 是一款**自托管**软件，所有数据保存在你自己的服务器上。本文档说明软件本身的数据处理行为，便于你判断合规边界。
 
-## 1. 软件本身不收集任何遥测数据
+## 1. 遥测与崩溃上报
 
-Songloft 服务端**不内置**任何匿名统计、崩溃上报、用户行为分析或广告 SDK，启动后**不会主动**向任何第三方发送数据。
+Songloft 服务端集成了 [Tracely](https://github.com/hanxi/tracely) 崩溃上报 SDK。该功能为**编译时可选**——仅当构建时通过 `-ldflags` 注入了 `AppSecret` 和 `Host` 两个参数才启用。
+
+- **GitHub Releases 提供的预编译二进制与 Docker 镜像**：已注入 Tracely 参数，**崩溃上报默认启用**。当服务端发生 panic 时，会向项目维护者自建的 Tracely 服务上报错误堆栈信息（不含用户数据、音乐文件或账号信息）。
+- **自行编译**（`make build` 不传 `TRACELY_APP_SECRET` / `TRACELY_HOST`）：崩溃上报**不启用**，服务端不会发出任何上报请求。
+
+启动日志会明确显示 Tracely 的启用状态：
+```
+Tracely 监控未启用（编译时未注入 AppSecret/Host）   # 未启用
+Tracely 已初始化                                    # 已启用
+```
 
 你可以通过抓包（tcpdump / Wireshark）或防火墙规则验证这一点。
 
+除此之外，Songloft 不内置任何匿名统计、用户行为分析或广告 SDK。
+
 ## 2. 主动出站请求清单
 
-Songloft 仅在以下场景会发起**主动**出站请求，且全部由用户行为或显式配置触发：
+Songloft 在以下场景会发起**主动**出站请求：
 
 | 触发场景 | 请求目标 | 数据内容 |
 |---------|---------|---------|
+| 服务端发生 panic（仅编译时启用 Tracely 时） | 维护者自建的 Tracely 服务 | 错误堆栈、服务端版本号、平台信息。**不含**用户数据、音乐文件或账号信息 |
 | 用户在「设置」中点击「检查更新」 | `github.com/songloft-org/songloft` | 仅 HTTP GET version.json，不带任何用户标识 |
 | 用户安装 / 启用 JS 插件并触发其网络权限 | 由该插件的代码决定（运行时受 `permissions: ["network"]` 沙箱权限约束） | 由插件实现决定 |
 | 用户在 Web UI 中加载本仓库 README 中的徽章（如 visitorbadge.io） | `api.visitorbadge.io` | 仅 GitHub README 渲染时由 GitHub 服务端代理，不在 Songloft 软件内 |
-
-> 软件本身不接入任何分析 / 错误追踪平台。
 
 ## 3. 数据存储位置
 
