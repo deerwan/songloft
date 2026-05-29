@@ -1,5 +1,9 @@
 # 🎵 Songloft 快速使用指南
 
+<p align="center">
+  <img src="docs/public/social-preview.png" alt="Songloft" width="640">
+</p>
+
 [![GitHub License](https://img.shields.io/github/license/songloft-org/songloft)](https://github.com/songloft-org/songloft)
 [![Docker Image Version](https://img.shields.io/docker/v/songloft/songloft?sort=semver&label=docker%20image)](https://hub.docker.com/r/songloft/songloft)
 [![Docker Pulls](https://img.shields.io/docker/pulls/songloft/songloft)](https://hub.docker.com/r/songloft/songloft)
