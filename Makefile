@@ -57,9 +57,17 @@ build-nuxt-web: ## 构建旧版 Nuxt Web 前端（已弃用，仅作备用）
 build-frontend-web-embedded: ## 构建 Flutter Web（嵌入模式）：隐藏 API 地址 UI，输出至 songloft-player-build/web-embedded
 	@bash songloft-player/scripts/build-frontend.sh web-embedded $(if $(OUTPUT_DIR),$(OUTPUT_DIR),songloft-player-build)
 
+.PHONY: build-frontend-web-embedded-debug
+build-frontend-web-embedded-debug: ## 构建 Flutter Web（嵌入模式，含 source map）：仅本地调试用，产物体积会显著增大
+	@DEBUG=1 bash songloft-player/scripts/build-frontend.sh web-embedded $(if $(OUTPUT_DIR),$(OUTPUT_DIR),songloft-player-build)
+
 .PHONY: build-frontend-web
 build-frontend-web: ## 构建 Flutter Web 独立部署版（standalone）
 	@bash songloft-player/scripts/build-frontend.sh web $(if $(OUTPUT_DIR),$(OUTPUT_DIR),songloft-player-build)
+
+.PHONY: build-frontend-web-debug
+build-frontend-web-debug: ## 构建 Flutter Web 独立部署版（含 source map）：仅本地调试用
+	@DEBUG=1 bash songloft-player/scripts/build-frontend.sh web $(if $(OUTPUT_DIR),$(OUTPUT_DIR),songloft-player-build)
 
 .PHONY: build-frontend-linux
 build-frontend-linux: ## 构建 Flutter Linux 桌面版

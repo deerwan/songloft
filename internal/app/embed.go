@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"mime"
 	"net/http"
+	"path"
 	"strings"
 )
 
@@ -37,6 +38,12 @@ func (a *App) registerWebStatic() {
 		// 根路径或文件不存在 → 走 SPA 回退，返回 index.html
 		if urlPath != "" {
 			if _, err := fs.Stat(distFS, urlPath); err != nil {
+				// 静态资源（带扩展名，如 .js/.json/.css/.png/.map 等）找不到时直接 404，
+				// 不回退 index.html，避免前端把 HTML 当 JS/JSON 解析报错
+				if strings.Contains(path.Base(urlPath), ".") {
+					http.NotFound(w, r)
+					return
+				}
 				r.URL.Path = "/"
 			}
 		}
